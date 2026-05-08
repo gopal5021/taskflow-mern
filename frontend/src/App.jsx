@@ -1,44 +1,31 @@
-import { useState, useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 
 function App() {
-  const [page, setPage] = useState("login");
-
-  useEffect(() => {
-    const savedPage = localStorage.getItem("page");
-    if (savedPage) {
-      setPage(savedPage);
-    }
-  }, []);
+  const token = localStorage.getItem("token");
 
   return (
-    <div>
-      {page === "login" && <Login />}
-      {page === "register" && <Register />}
-      {page === "dashboard" && <Dashboard />}
+    <Router>
+      <Routes>
 
-      <div className="text-center mt-4">
-        {page === "login" && (
-          <button
-            className="text-blue-500"
-            onClick={() => setPage("register")}
-          >
-            Go to Register
-          </button>
-        )}
+        {/* ✅ DEFAULT ROUTE → REGISTER */}
+        <Route path="/" element={<Navigate to="/register" />} />
 
-        {page === "register" && (
-          <button
-            className="text-blue-500"
-            onClick={() => setPage("login")}
-          >
-            Go to Login
-          </button>
-        )}
-      </div>
-    </div>
+        {/* AUTH ROUTES */}
+        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
+
+        {/* PROTECTED ROUTE */}
+        <Route
+          path="/dashboard"
+          element={token ? <Dashboard /> : <Navigate to="/login" />}
+        />
+
+      </Routes>
+    </Router>
   );
 }
 

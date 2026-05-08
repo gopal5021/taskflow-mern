@@ -1,42 +1,48 @@
 import { useState } from "react";
 import axios from "axios";
-import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 function Register() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const navigate = useNavigate();
+
+  const BASE_URL = "https://taskflow-mern-hkhg.onrender.com";
+
   const handleRegister = async (e) => {
     e.preventDefault();
 
     try {
-      const res = await axios.post("http://localhost:1704/api/auth/signup", {
+      await axios.post(`${BASE_URL}/api/auth/register`, {
         name,
         email,
         password,
       });
 
-      localStorage.setItem("token", res.data.token);
-      toast.success("Registered successfully 🚀");
-      window.location.reload();
+      alert("Registered successfully");
+
+      // ✅ AUTO REDIRECT TO LOGIN
+      navigate("/login");
+
     } catch (error) {
-      toast.error(error.response?.data?.message || "Register failed");
+      alert(error.response?.data?.message || "Registration failed");
     }
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+    <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <form
         onSubmit={handleRegister}
         className="bg-white p-6 rounded shadow-md w-80"
       >
-        <h2 className="text-2xl font-bold mb-4 text-center">Register</h2>
+        <h2 className="text-xl font-bold mb-4 text-center">Register</h2>
 
         <input
           type="text"
           placeholder="Name"
-          className="w-full p-2 border mb-3"
+          className="w-full border p-2 mb-3 rounded"
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
@@ -44,7 +50,7 @@ function Register() {
         <input
           type="email"
           placeholder="Email"
-          className="w-full p-2 border mb-3"
+          className="w-full border p-2 mb-3 rounded"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
@@ -52,12 +58,24 @@ function Register() {
         <input
           type="password"
           placeholder="Password"
-          className="w-full p-2 border mb-3"
+          className="w-full border p-2 mb-3 rounded"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
 
-        <button className="w-full bg-green-500 text-white p-2">Register</button>
+        <button className="w-full bg-blue-500 text-white p-2 rounded">
+          Register
+        </button>
+
+        <p className="text-center mt-3">
+          Already have an account?{" "}
+          <span
+            className="text-blue-500 cursor-pointer"
+            onClick={() => navigate("/login")}
+          >
+            Login
+          </span>
+        </p>
       </form>
     </div>
   );
