@@ -15,7 +15,9 @@ function Dashboard() {
 
   const token = localStorage.getItem("token");
 
-  // OVERDUE TASKS (UNCHANGED)
+  // ✅ CHANGE ONLY THIS BASE URL
+  const BASE_URL = "https://taskflow-mern-hkhg.onrender.com";
+
   const overdueTasks = tasks.filter(
     (task) =>
       task.dueDate &&
@@ -23,11 +25,10 @@ function Dashboard() {
       task.status !== "Completed"
   );
 
-  // FETCH TASKS
   const fetchTasks = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:1704/api/tasks", {
+      const res = await axios.get(`${BASE_URL}/api/tasks`, {
         headers: { Authorization: token },
       });
       setTasks(res.data);
@@ -38,7 +39,6 @@ function Dashboard() {
     }
   };
 
-  // ADD TASK (LOGIC UNCHANGED — ONLY MESSAGE FIXED)
   const addTask = async () => {
     if (!title) {
       toast.error("Please enter task title");
@@ -65,7 +65,7 @@ function Dashboard() {
 
     try {
       await axios.post(
-        "http://localhost:1704/api/tasks",
+        `${BASE_URL}/api/tasks`,
         { title, dueDate },
         { headers: { Authorization: token } }
       );
@@ -80,11 +80,10 @@ function Dashboard() {
     }
   };
 
-  // COMPLETE TASK
   const completeTask = async (id) => {
     try {
       await axios.put(
-        `http://localhost:1704/api/tasks/${id}`,
+        `${BASE_URL}/api/tasks/${id}`,
         {},
         { headers: { Authorization: token } }
       );
@@ -94,14 +93,13 @@ function Dashboard() {
     }
   };
 
-  // DELETE TASK (UNCHANGED)
   const deleteTask = async (id, status) => {
     if (status !== "Completed") {
       if (!window.confirm("Task not completed. Delete anyway?")) return;
     }
 
     try {
-      await axios.delete(`http://localhost:1704/api/tasks/${id}`, {
+      await axios.delete(`${BASE_URL}/api/tasks/${id}`, {
         headers: { Authorization: token },
       });
       fetchTasks();
@@ -110,7 +108,6 @@ function Dashboard() {
     }
   };
 
-  // LOGOUT
   const logout = () => {
     localStorage.removeItem("token");
     window.location.reload();
@@ -121,12 +118,8 @@ function Dashboard() {
   }, []);
 
   return (
-    <div
-      className={`p-6 min-h-screen ${
-        darkMode ? "bg-gray-900 text-white" : "bg-gray-100"
-      }`}
-    >
-      {/* HEADER */}
+    <div className={`p-6 min-h-screen ${darkMode ? "bg-gray-900 text-white" : "bg-gray-100"}`}>
+
       <div className="flex justify-between mb-6">
         <h1 className="text-2xl font-bold">Task Dashboard</h1>
 
@@ -147,15 +140,12 @@ function Dashboard() {
         </div>
       </div>
 
-      {/* OVERDUE WARNING (ONLY TEXT UPDATED) */}
       {overdueTasks.length >= 4 && (
         <div className="bg-red-500 text-white p-3 mb-4 rounded text-center font-medium">
-          ⚠ You have {overdueTasks.length} overdue tasks. Complete at least one
-          to unlock the Add button.
+          ⚠ You have {overdueTasks.length} overdue tasks. Complete at least one to unlock the Add button.
         </div>
       )}
 
-      {/* ADD TASK */}
       <div className="flex gap-2 mb-4">
         <input
           className="border p-2 flex-1 rounded text-black"
@@ -184,7 +174,6 @@ function Dashboard() {
         </button>
       </div>
 
-      {/* SEARCH + FILTER */}
       <div className="flex gap-2 mb-6">
         <input
           className="border p-2 flex-1 rounded text-black"
@@ -204,7 +193,6 @@ function Dashboard() {
         </select>
       </div>
 
-      {/* TASK LIST */}
       {loading ? (
         <p>Loading...</p>
       ) : (
@@ -229,31 +217,25 @@ function Dashboard() {
                   darkMode ? "bg-gray-800" : "bg-white"
                 } ${isOverdue ? "border-l-4 border-red-500" : ""}`}
               >
-                {/* SAME UI — unchanged */}
                 <div className="flex justify-between">
                   <div>
                     <div className="flex gap-2 items-center">
                       <p>{task.title}</p>
 
-                      <span
-                        className={`px-2 text-xs rounded ${
-                          task.status === "Completed"
-                            ? "bg-green-200 text-green-800"
-                            : "bg-yellow-200 text-yellow-800"
-                        }`}
-                      >
+                      <span className={`px-2 text-xs rounded ${
+                        task.status === "Completed"
+                          ? "bg-green-200 text-green-800"
+                          : "bg-yellow-200 text-yellow-800"
+                      }`}>
                         {task.status}
                       </span>
                     </div>
 
                     {task.dueDate && (
-                      <p
-                        className={`text-sm ${
-                          isOverdue ? "text-red-500" : "text-gray-500"
-                        }`}
-                      >
-                        Due:{" "}
-                        {new Date(task.dueDate).toLocaleDateString()}
+                      <p className={`text-sm ${
+                        isOverdue ? "text-red-500" : "text-gray-500"
+                      }`}>
+                        Due: {new Date(task.dueDate).toLocaleDateString()}
                       </p>
                     )}
                   </div>
