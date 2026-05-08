@@ -9,7 +9,7 @@ function Register() {
 
   const navigate = useNavigate();
 
-  const BASE_URL = "https://taskflow-gopalsoni.vercel.app";
+  const BASE_URL = "https://taskflow-mern-hkhg.onrender.com";
 
   const handleRegister = async (e) => {
     e.preventDefault();
